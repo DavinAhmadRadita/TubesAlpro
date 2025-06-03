@@ -272,7 +272,7 @@ func main() {
 			} else {
 				fmt.Println("Pemain dalam team", team)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun)\n", p.Name, p.Age)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
 				}
 			}
 
@@ -286,7 +286,7 @@ func main() {
 			} else {
 				fmt.Println("Pemain dengan umur", age)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun) - %s\n", p.Name, p.Age, p.Team)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
 				}
 			}
 
@@ -300,7 +300,7 @@ func main() {
 			} else {
 				fmt.Println("Pemain dari", nation)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun) - %s\n", p.Name, p.Age, p.Team)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
 				}
 			}
 
@@ -313,7 +313,7 @@ func main() {
 			fmt.Println("Keluar dari program.")
 			return
 		default:
-			fmt.Println("Pilihan tidak valid. Coba lagi.")
+			fmt.Println("Tolong belajar membaca")
 		}
 	}
 }
