@@ -73,18 +73,25 @@ func bacaCSV(filename string) []Pemain {
 	return list
 }
 
-func selectionSortByName(data []Pemain) {
+func selectionSortByOVR(data []Pemain) {
 	n := len(data)
 	for i := 0; i < n-1; i++ {
-		minIdx := i
+		maxIdx := i
 		for j := i + 1; j < n; j++ {
-			if strings.ToLower(data[j].Name) < strings.ToLower(data[minIdx].Name) {
-				minIdx = j
+			if toInt(data[j].OVR) > toInt(data[maxIdx].OVR) {
+				maxIdx = j
 			}
 		}
-		data[i], data[minIdx] = data[minIdx], data[i]
+		data[i], data[maxIdx] = data[maxIdx], data[i]
 	}
 }
+
+func toInt(s string) int {
+	var val int
+	fmt.Sscanf(s, "%d", &val)
+	return val
+}
+
 
 func searchByName(data []Pemain, target string) []Pemain {
 	var result []Pemain
@@ -230,7 +237,7 @@ func tulisCSV(filename string, data []Pemain) {
 
 func main() {
 	pemainList := bacaCSV("player.csv")
-	selectionSortByName(pemainList)
+	selectionSortByOVR(pemainList)
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -306,14 +313,14 @@ func main() {
 
 		case "5":
 			tambahPemain(reader, &pemainList)
-			selectionSortByName(pemainList)
+			selectionSortByOVR(pemainList)
 			tulisCSV("player.csv", pemainList)
 
 		case "6":
 			fmt.Println("Keluar dari program.")
 			return
 		default:
-			fmt.Println("Tolong belajar membaca")
+			fmt.Println("Pilihan tidak valid. Coba lagi.")
 		}
 	}
 }
