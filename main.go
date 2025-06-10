@@ -9,24 +9,36 @@ import (
 	"strings"
 )
 
-type Pemain struct {
-	Name      string
-	OVR       string
-	PAC       string
-	SHO       string
-	PAS       string
-	DRI       string
-	DEF       string
-	PHY       string
+type PemainInfo struct {
+	Name   string
+	Age    string
+	Height string
+	Weight string
+	Nation string
+}
+
+type StatistikPemain struct {
+	OVR string
+	PAC string
+	SHO string
+	PAS string
+	DRI string
+	DEF string
+	PHY string
+}
+
+type KarierPemain struct {
 	Position  string
 	Preferred string
-	Height    string
-	Weight    string
 	AltPos    string
-	Age       string
-	Nation    string
 	League    string
 	Team      string
+}
+
+type Pemain struct {
+	Info   PemainInfo
+	Stat   StatistikPemain
+	Karier KarierPemain
 }
 
 func bacaCSV(filename string) []Pemain {
@@ -44,30 +56,33 @@ func bacaCSV(filename string) []Pemain {
 
 	var list []Pemain
 	for i, row := range rows {
-		if i == 0 {
-			continue
-		}
-		if len(row) < 17 {
+		if i == 0 || len(row) < 17 {
 			continue
 		}
 		list = append(list, Pemain{
-			Name:      row[0],
-			OVR:       row[1],
-			PAC:       row[2],
-			SHO:       row[3],
-			PAS:       row[4],
-			DRI:       row[5],
-			DEF:       row[6],
-			PHY:       row[7],
-			Position:  row[8],
-			Preferred: row[9],
-			Height:    row[10],
-			Weight:    row[11],
-			AltPos:    row[12],
-			Age:       row[13],
-			Nation:    row[14],
-			League:    row[15],
-			Team:      row[16],
+			Info: PemainInfo{
+				Name:   row[0],
+				Age:    row[13],
+				Height: row[10],
+				Weight: row[11],
+				Nation: row[14],
+			},
+			Stat: StatistikPemain{
+				OVR: row[1],
+				PAC: row[2],
+				SHO: row[3],
+				PAS: row[4],
+				DRI: row[5],
+				DEF: row[6],
+				PHY: row[7],
+			},
+			Karier: KarierPemain{
+				Position:  row[8],
+				Preferred: row[9],
+				AltPos:    row[12],
+				League:    row[15],
+				Team:      row[16],
+			},
 		})
 	}
 	return list
@@ -78,7 +93,7 @@ func selectionSortByOVR(data []Pemain) {
 	for i := 0; i < n-1; i++ {
 		maxIdx := i
 		for j := i + 1; j < n; j++ {
-			if toInt(data[j].OVR) > toInt(data[maxIdx].OVR) {
+			if toInt(data[j].Stat.OVR) > toInt(data[maxIdx].Stat.OVR) {
 				maxIdx = j
 			}
 		}
@@ -92,12 +107,11 @@ func toInt(s string) int {
 	return val
 }
 
-
 func searchByName(data []Pemain, target string) []Pemain {
 	var result []Pemain
 	target = strings.ToLower(target)
 	for _, d := range data {
-		if strings.HasPrefix(strings.ToLower(d.Name), target) {
+		if strings.HasPrefix(strings.ToLower(d.Info.Name), target) {
 			result = append(result, d)
 		}
 	}
@@ -107,7 +121,7 @@ func searchByName(data []Pemain, target string) []Pemain {
 func searchByNation(data []Pemain, nation string) []Pemain {
 	var result []Pemain
 	for _, d := range data {
-		if strings.EqualFold(d.Nation, nation) {
+		if strings.EqualFold(d.Info.Nation, nation) {
 			result = append(result, d)
 		}
 	}
@@ -117,7 +131,7 @@ func searchByNation(data []Pemain, nation string) []Pemain {
 func searchByTeam(data []Pemain, team string) []Pemain {
 	var result []Pemain
 	for _, d := range data {
-		if strings.EqualFold(d.Team, team) {
+		if strings.EqualFold(d.Karier.Team, team) {
 			result = append(result, d)
 		}
 	}
@@ -127,7 +141,7 @@ func searchByTeam(data []Pemain, team string) []Pemain {
 func searchByAge(data []Pemain, age string) []Pemain {
 	var result []Pemain
 	for _, d := range data {
-		if d.Age == age {
+		if d.Info.Age == age {
 			result = append(result, d)
 		}
 	}
@@ -139,72 +153,72 @@ func tambahPemain(reader *bufio.Reader, pemainList *[]Pemain) {
 	var p Pemain
 
 	fmt.Print("Nama: ")
-	p.Name, _ = reader.ReadString('\n')
-	p.Name = strings.TrimSpace(p.Name)
+	p.Info.Name, _ = reader.ReadString('\n')
+	p.Info.Name = strings.TrimSpace(p.Info.Name)
 
 	fmt.Print("OVR: ")
-	p.OVR, _ = reader.ReadString('\n')
-	p.OVR = strings.TrimSpace(p.OVR)
+	p.Stat.OVR, _ = reader.ReadString('\n')
+	p.Stat.OVR = strings.TrimSpace(p.Stat.OVR)
 
 	fmt.Print("PAC: ")
-	p.PAC, _ = reader.ReadString('\n')
-	p.PAC = strings.TrimSpace(p.PAC)
+	p.Stat.PAC, _ = reader.ReadString('\n')
+	p.Stat.PAC = strings.TrimSpace(p.Stat.PAC)
 
 	fmt.Print("SHO: ")
-	p.SHO, _ = reader.ReadString('\n')
-	p.SHO = strings.TrimSpace(p.SHO)
+	p.Stat.SHO, _ = reader.ReadString('\n')
+	p.Stat.SHO = strings.TrimSpace(p.Stat.SHO)
 
 	fmt.Print("PAS: ")
-	p.PAS, _ = reader.ReadString('\n')
-	p.PAS = strings.TrimSpace(p.PAS)
+	p.Stat.PAS, _ = reader.ReadString('\n')
+	p.Stat.PAS = strings.TrimSpace(p.Stat.PAS)
 
 	fmt.Print("DRI: ")
-	p.DRI, _ = reader.ReadString('\n')
-	p.DRI = strings.TrimSpace(p.DRI)
+	p.Stat.DRI, _ = reader.ReadString('\n')
+	p.Stat.DRI = strings.TrimSpace(p.Stat.DRI)
 
 	fmt.Print("DEF: ")
-	p.DEF, _ = reader.ReadString('\n')
-	p.DEF = strings.TrimSpace(p.DEF)
+	p.Stat.DEF, _ = reader.ReadString('\n')
+	p.Stat.DEF = strings.TrimSpace(p.Stat.DEF)
 
 	fmt.Print("PHY: ")
-	p.PHY, _ = reader.ReadString('\n')
-	p.PHY = strings.TrimSpace(p.PHY)
+	p.Stat.PHY, _ = reader.ReadString('\n')
+	p.Stat.PHY = strings.TrimSpace(p.Stat.PHY)
 
 	fmt.Print("Posisi: ")
-	p.Position, _ = reader.ReadString('\n')
-	p.Position = strings.TrimSpace(p.Position)
+	p.Karier.Position, _ = reader.ReadString('\n')
+	p.Karier.Position = strings.TrimSpace(p.Karier.Position)
 
 	fmt.Print("Preferred kaki: ")
-	p.Preferred, _ = reader.ReadString('\n')
-	p.Preferred = strings.TrimSpace(p.Preferred)
+	p.Karier.Preferred, _ = reader.ReadString('\n')
+	p.Karier.Preferred = strings.TrimSpace(p.Karier.Preferred)
 
 	fmt.Print("Tinggi: ")
-	p.Height, _ = reader.ReadString('\n')
-	p.Height = strings.TrimSpace(p.Height)
+	p.Info.Height, _ = reader.ReadString('\n')
+	p.Info.Height = strings.TrimSpace(p.Info.Height)
 
 	fmt.Print("Berat: ")
-	p.Weight, _ = reader.ReadString('\n')
-	p.Weight = strings.TrimSpace(p.Weight)
+	p.Info.Weight, _ = reader.ReadString('\n')
+	p.Info.Weight = strings.TrimSpace(p.Info.Weight)
 
 	fmt.Print("Posisi Alternatif: ")
-	p.AltPos, _ = reader.ReadString('\n')
-	p.AltPos = strings.TrimSpace(p.AltPos)
+	p.Karier.AltPos, _ = reader.ReadString('\n')
+	p.Karier.AltPos = strings.TrimSpace(p.Karier.AltPos)
 
 	fmt.Print("Umur: ")
-	p.Age, _ = reader.ReadString('\n')
-	p.Age = strings.TrimSpace(p.Age)
+	p.Info.Age, _ = reader.ReadString('\n')
+	p.Info.Age = strings.TrimSpace(p.Info.Age)
 
 	fmt.Print("Negara: ")
-	p.Nation, _ = reader.ReadString('\n')
-	p.Nation = strings.TrimSpace(p.Nation)
+	p.Info.Nation, _ = reader.ReadString('\n')
+	p.Info.Nation = strings.TrimSpace(p.Info.Nation)
 
 	fmt.Print("Liga: ")
-	p.League, _ = reader.ReadString('\n')
-	p.League = strings.TrimSpace(p.League)
+	p.Karier.League, _ = reader.ReadString('\n')
+	p.Karier.League = strings.TrimSpace(p.Karier.League)
 
 	fmt.Print("Tim: ")
-	p.Team, _ = reader.ReadString('\n')
-	p.Team = strings.TrimSpace(p.Team)
+	p.Karier.Team, _ = reader.ReadString('\n')
+	p.Karier.Team = strings.TrimSpace(p.Karier.Team)
 
 	*pemainList = append(*pemainList, p)
 	fmt.Println("Pemain berhasil ditambahkan!")
@@ -228,9 +242,9 @@ func tulisCSV(filename string, data []Pemain) {
 
 	for _, p := range data {
 		writer.Write([]string{
-			p.Name, p.OVR, p.PAC, p.SHO, p.PAS, p.DRI, p.DEF, p.PHY,
-			p.Position, p.Preferred, p.Height, p.Weight, p.AltPos,
-			p.Age, p.Nation, p.League, p.Team,
+			p.Info.Name, p.Stat.OVR, p.Stat.PAC, p.Stat.SHO, p.Stat.PAS, p.Stat.DRI, p.Stat.DEF, p.Stat.PHY,
+			p.Karier.Position, p.Karier.Preferred, p.Info.Height, p.Info.Weight, p.Karier.AltPos,
+			p.Info.Age, p.Info.Nation, p.Karier.League, p.Karier.Team,
 		})
 	}
 }
@@ -238,7 +252,6 @@ func tulisCSV(filename string, data []Pemain) {
 func main() {
 	pemainList := bacaCSV("player.csv")
 	selectionSortByOVR(pemainList)
-
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
@@ -249,8 +262,8 @@ func main() {
 		fmt.Println("4. Cari berdasarkan negara")
 		fmt.Println("5. Tambah pemain")
 		fmt.Println("6. Keluar")
-
 		fmt.Print("Pilih menu (1-6): ")
+
 		choice, _ := reader.ReadString('\n')
 		choice = strings.TrimSpace(choice)
 
@@ -265,10 +278,10 @@ func main() {
 			} else {
 				fmt.Println("Hasil pencarian pemain dengan awalan:", cari)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n",
+						p.Info.Name, p.Info.Age, p.Karier.Team, p.Info.Nation, p.Stat.OVR, p.Karier.Position)
 				}
 			}
-
 		case "2":
 			fmt.Print("Masukkan nama team: ")
 			team, _ := reader.ReadString('\n')
@@ -279,10 +292,10 @@ func main() {
 			} else {
 				fmt.Println("Pemain dalam team", team)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n",
+						p.Info.Name, p.Info.Age, p.Karier.Team, p.Info.Nation, p.Stat.OVR, p.Karier.Position)
 				}
 			}
-
 		case "3":
 			fmt.Print("Masukkan umur pemain: ")
 			age, _ := reader.ReadString('\n')
@@ -293,10 +306,10 @@ func main() {
 			} else {
 				fmt.Println("Pemain dengan umur", age)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n",
+						p.Info.Name, p.Info.Age, p.Karier.Team, p.Info.Nation, p.Stat.OVR, p.Karier.Position)
 				}
 			}
-
 		case "4":
 			fmt.Print("Masukkan negara pemain: ")
 			nation, _ := reader.ReadString('\n')
@@ -307,15 +320,14 @@ func main() {
 			} else {
 				fmt.Println("Pemain dari", nation)
 				for _, p := range results {
-					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n", p.Name, p.Age, p.Team, p.Nation, p.OVR, p.Position)
+					fmt.Printf("- %s (%s tahun), %s - %s | OVR: %s | Posisi: %s\n",
+						p.Info.Name, p.Info.Age, p.Karier.Team, p.Info.Nation, p.Stat.OVR, p.Karier.Position)
 				}
 			}
-
 		case "5":
 			tambahPemain(reader, &pemainList)
 			selectionSortByOVR(pemainList)
 			tulisCSV("player.csv", pemainList)
-
 		case "6":
 			fmt.Println("Keluar dari program.")
 			return
